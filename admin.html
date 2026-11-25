@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AURUM Admin</title>
+<style>
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+body{background:#0f0f0f;color:#fff;padding:20px;display:flex;justify-content:center}
+.card{background:#1a1a1a;border:1px solid #333;border-radius:16px;width:100%;max-width:420px;padding:24px;margin-top:30px}
+h1{text-align:center;color:#d4af37;letter-spacing:3px}
+p{ text-align:center;color:#aaa;font-size:13px;margin:8px 0 20px}
+label{display:block;color:#aaa;font-size:13px;margin:14px 0 6px}
+input{width:100%;padding:13px;border-radius:10px;border:1px solid #333;background:#222;color:#fff;font-size:16px;outline:none}
+button{width:100%;padding:14px;border:none;border-radius:12px;background:#d4af37;font-weight:bold;font-size:16px;cursor:pointer;margin-top:18px}
+.back{display:block;text-align:center;color:#d4af37;margin-top:16px;text-decoration:none;font-weight:bold}
+.hidden{display:none}
+.note{font-size:12px;color:#888;text-align:center;margin-top:12px}
+</style>
+</head>
+<body>
+<div class="card">
+<h1>AURUM ADMIN</h1>
+
+<div id="loginBox">
+<p>Enter password to manage prices</p>
+<label>Password</label>
+<input type="password" id="pass" placeholder="Enter password">
+<button onclick="login()">Login</button>
+<p class="note">Default: Maurice2005.</p>
+</div>
+
+<div id="adminBox" class="hidden">
+<p>Update Gold Prices - Per Troy Ounce (USD)</p>
+<label>24K Price (per oz) $</label>
+<input type="number" id="p24" step="0.01">
+<label>22K Price (per oz) $</label>
+<input type="number" id="p22" step="0.01">
+<label>18K Price (per oz) $</label>
+<input type="number" id="p18" step="0.01">
+<button onclick="save()">Save Prices</button>
+<p id="msg" style="color:#4ade80;text-align:center;margin-top:12px"></p>
+<a class="back" href="index.html">← Back to Store</a>
+</div>
+
+</div>
+<script>
+function login(){
+  let p = document.getElementById('pass').value;
+  if(p === 'Maurice2005.'){
+    document.getElementById('loginBox').classList.add('hidden');
+    document.getElementById('adminBox').classList.remove('hidden');
+    load();
+  } else {
+    alert('Wrong password');
+  }
+}
+function load(){
+  let s = JSON.parse(localStorage.getItem('aurum_prices') || '{}');
+  document.getElementById('p24').value = s.p24 || 2642.50;
+  document.getElementById('p22').value = s.p22 || 2422.00;
+  document.getElementById('p18').value = s.p18 || 1982.00;
+}
+function save(){
+  let data = {
+    p24: document.getElementById('p24').value,
+    p22: document.getElementById('p22').value,
+    p18: document.getElementById('p18').value
+  };
+  localStorage.setItem('aurum_prices', JSON.stringify(data));
+  document.getElementById('msg').innerText = 'Saved! Go to Store to see new prices.';
+}
+</script>
+</body>
+</html>
