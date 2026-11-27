@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AURUM LTD</title>
+<meta name="theme-color" content="#c9a227">
+<link rel="manifest" id="aurumManifest">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+body{background:#f2f2f2;color:#111;padding:0}
+.app{max-width:430px;margin:0 auto;background:#fff;min-height:100vh;padding:12px;padding-bottom:30px;box-shadow:0 0 20px rgba(0,0,0,0.1)}
+.top{display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:26px;font-weight:900;letter-spacing:2px;color:#c9a227}
+.logo span{font-size:10px;display:block;letter-spacing:3px;color:#999;font-weight:400}
+.live{font-size:11px;color:#1db954;font-weight:700}
+.cards{display:flex;gap:8px;margin:14px 0}
+.card{flex:1;border:1px solid #eee;border-radius:10px;padding:10px;text-align:center}
+.card b{font-size:12px}.card p{font-size:15px;font-weight:800;margin:4px 0}
+.card span{font-size:11px;color:#1db954}
+.market{border:1px solid #eee;border-radius:12px;padding:12px}
+.m-head{display:flex;justify-content:space-between}
+#chart{width:100%;height:220px;margin:10px 0}
+.times{display:flex;gap:6px;justify-content:center;margin:8px 0}
+.times button{border:1px solid #ddd;background:#fff;padding:6px 10px;border-radius:20px;font-size:11px;cursor:pointer}
+.times button.active{background:#111;color:#fff}
+.trade{display:flex;gap:8px;margin:12px 0}
+.buy{flex:1;background:#1db954;color:#fff;border:none;padding:14px;border-radius:8px;font-weight:900;font-size:16px;cursor:pointer;opacity:.4}
+.buy.selected{opacity:1;box-shadow:0 0 0 2px #1db954}
+.mid{flex:1;text-align:center;border:1px solid #eee;border-radius:8px;padding:10px;font-weight:800;cursor:pointer;background:#fffbe6}
+.sell{flex:1;background:#e53935;color:#fff;border:none;padding:14px;border-radius:8px;font-weight:900;font-size:16px;cursor:pointer;opacity:.4}
+.sell.selected{opacity:1;box-shadow:0 0 0 2px #e53935}
+.trade-info{text-align:center;font-size:11px;color:#888;margin:-4px 0 10px 0}
+.wallet{display:flex;gap:8px}
+.wallet div{flex:1;border:1px solid #eee;border-radius:10px;padding:12px;text-align:center}
+.wallet b{font-size:18px}
+.news{margin-top:14px;border-radius:10px;padding:12px;overflow:hidden;white-space:nowrap;transition:background 1s}
+.news.green{background:#1db954}.news.blue{background:#007bff}
+.news h4{color:#fff;font-size:13px;margin-bottom:6px}
+.ticker{display:inline-block;white-space:nowrap;animation:scroll 15s linear infinite;color:#fff;font-size:13px;font-weight:700}
+@keyframes scroll{0%{transform:translateX(100%)}100%{transform:translateX(-100%)}}
+.gram-row{display:flex;gap:6px;margin:8px 0}
+.gram-row button{flex:1;padding:10px;border:1px solid #ddd;background:#fff;border-radius:8px;cursor:pointer;font-weight:700}
+.gram-row button.active{background:#111;color:#fff}
+.gram-input{display:flex;gap:8px;margin:8px 0;align-items:center}
+.gram-input input{flex:1;padding:12px;border:1px solid #ddd;border-radius:8px;text-align:center;font-weight:800;font-size:16px}
+.confirm{width:100%;padding:14px;background:#111;color:#fff;border:none;border-radius:8px;font-weight:900;font-size:15px;cursor:pointer;margin-top:8px}
+.buy-price,.sell-price{font-size:11px;text-align:center;margin-top:4px;color:#555}
+.mpesaRow{display:flex;gap:8px;margin-top:10px}
+.mpesaRow button{flex:1;padding:13px;border:none;border-radius:8px;font-weight:900;font-size:13px;cursor:pointer}
+.depBtn{background:#009a44;color:#fff}.withBtn{background:#fff;color:#111;border:2px solid #111 !important}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99;align-items:center;justify-content:center;padding:20px}
+.modal.open{display:flex}
+.mBox{background:#fff;width:100%;max-width:380px;border-radius:14px;padding:20px}
+.mBox h3{margin-bottom:10px}.mBox label{font-size:12px;font-weight:700;color:#555;display:block;margin:10px 0 5px}
+.mBox input{width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;font-size:15px}
+.mBox button{width:100%;padding:13px;margin-top:12px;border:none;border-radius:10px;font-weight:900;cursor:pointer}
+.sendBtn{background:#009a44;color:#fff}.closeBtn{background:#eee;color:#333}
+.payInfo{background:#fff7e0;border:1px dashed #c9a227;padding:10px;border-radius:8px;font-size:13px;margin-top:12px;display:none}
+.authTabs{display:flex;gap:8px;margin:15px 0}
+.authTabs div{flex:1;padding:11px;text-align:center;border-radius:8px;background:#eee;cursor:pointer;font-weight:800;font-size:14px}
+.authTabs div.active{background:#111;color:#fff}
+.authBox label{font-size:12px;font-weight:700;color:#555;display:block;margin:12px 0 5px}
+.authBox input{width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;font-size:15px}
+.authBtn{width:100%;padding:14px;background:#c9a227;color:#111;border:none;border-radius:8px;font-weight:900;font-size:15px;cursor:pointer;margin-top:14px}
+.authErr{color:red;font-size:13px;margin-top:8px;display:none}
+.logoutLink{font-size:12px;color:red;cursor:pointer;font-weight:700}
+.installBtn{width:auto;display:block;margin:8px auto 0 auto;padding:7px 14px;background:#fdf6dd;color:#7a5c00;border:1px solid #e8d48a;border-radius:20px;font-weight:700;font-size:12px;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="app authBox" id="authBox">
+<div class="top"><div class="logo">AURUM LTD<span>PRECIOUS METALS EXCHANGE</span></div><div class="live">● LIVE ONLINE</div></div>
+<button class="installBtn" id="installBtn1" onclick="installApp()">📲 Install AURUM App</button>
+<h2 style="margin-top:15px">Welcome to AURUM</h2>
+<p style="font-size:13px;color:#666;margin-top:5px">Buy & Sell Real Gold in Kenya</p>
+<div class="authTabs">
+<div id="tabLogin" class="active" onclick="showAuthTab('login')">LOGIN</div>
+<div id="tabSignup" onclick="showAuthTab('signup')">SIGN UP</div>
+</div>
+<div id="loginForm">
+<label>Phone Number (M-Pesa)</label><input id="loginPhone" placeholder="0712345678" inputmode="numeric">
+<label>PIN (4 digits)</label><input id="loginPin" type="password" placeholder="****" maxlength="4" inputmode="numeric">
+<button class="authBtn" onclick="doLogin()">LOGIN</button>
+<p class="authErr" id="loginErr"></p>
+<p style="font-size:12px;color:#888;margin-top:10px">No account? Click SIGN UP above.</p>
+</div>
+<div id="signupForm" style="display:none">
+<label>Full Name</label><input id="suName" placeholder="e.g. Maurice Kamau">
+<label>Phone Number (M-Pesa)</label><input id="suPhone" placeholder="0712345678" inputmode="numeric">
+<label>Create PIN (4 digits)</label><input id="suPin" type="password" placeholder="****" maxlength="4" inputmode="numeric">
+<label>Confirm PIN</label><input id="suPin2" type="password" placeholder="****" maxlength="4" inputmode="numeric">
+<button class="authBtn" onclick="doSignup()">CREATE ACCOUNT</button>
+<p class="authErr" id="suErr"></p>
+</div>
+</div>
+<div class="app" id="mainApp" style="display:none">
+<div class="top"><div class="logo">AURUM LTD<span>PRECIOUS METALS EXCHANGE</span></div><div style="text-align:right"><div class="live">● LIVE ONLINE</div><span class="logoutLink" onclick="doLogout()">Logout</span></div></div>
+<button class="installBtn" id="installBtn2" onclick="installApp()">📲 Install AURUM App</button>
+<p style="margin-top:10px;font-size:14px">Hello, <b id="userName">User</b> 👋</p>
+<div class="cards">
+<div class="card"><b>24K GOLD</b><p id="p24">$2,642.50</p><span>▲ +1.24%</span></div>
+<div class="card"><b>22K GOLD</b><p id="p22">$2,421.80</p><span>▲ +1.18%</span></div>
+<div class="card"><b>18K GOLD</b><p id="p18">$1,981.90</p><span>▲ +0.96%</span></div>
+</div>
+<div class="market"><div class="m-head"><div><h3>LIVE GOLD MARKET</h3><p id="pMain">$2,642.50</p></div><div style="text-align:right;font-size:12px;color:#888">24K GOLD<br><b style="color:#111" id="unitLabel">USD / OZ</b></div></div>
+<canvas id="chart"></canvas>
+<div class="times" id="times"><button class="active">1 MIN</button><button>5 MIN</button><button>1 HR</button><button>1 DAY</button><button>1 MONTH</button></div></div>
+<div class="trade"><div style="flex:1"><button class="buy selected" id="buyBtn" onclick="setMode('buy')">BUY</button><div class="buy-price" id="buyPrice">BUY: $2,662.31</div></div><div class="mid" onclick="switchCurrency()" id="currBtn">USD ▼<br><small style="font-size:9px;color:#888">Tap to change</small></div><div style="flex:1"><button class="sell" id="sellBtn" onclick="setMode('sell')">SELL</button><div class="sell-price" id="sellPrice">SELL: $2,622.69</div></div></div>
+<p class="trade-info" id="tradeInfo">Fee: $2 • Spread: 1.5% • 1 USD = 130 KES</p>
+<div><b>24K AMOUNT</b> - <span id="amountLabel">15.55 g = $1,321.25</span></div>
+<div class="gram-input"><input type="number" id="gramInput" value="15.55" min="1" step="0.01" oninput="setGramCustom(this.value)"><span><b>grams</b></span></div>
+<div class="gram-row" id="gramRow"><button onclick="setGram(5,this)">5 g</button><button onclick="setGram(10,this)">10 g</button><button class="active" onclick="setGram(15.55,this)">15.55 g</button><button onclick="setGram(31.10,this)">31.10 g</button></div>
+<p style="font-size:13px" id="payReceive">You Pay: <b id="youPay">$1,323.25</b> • You Receive: <b id="youReceive">15.55 g Gold</b></p>
+<button class="confirm" id="confirmBtn" onclick="confirmTrade()">Confirm BUY</button>
+<div class="mpesaRow"><button class="depBtn" onclick="openModal('deposit')">💚 Deposit via M-Pesa</button><button class="withBtn" onclick="openModal('withdraw')">Withdraw</button></div>
+<p style="font-size:11px;color:#888;text-align:center;margin-top:6px" id="myPhoneTxt">Wallet: Tap My Number to link your M-Pesa • <a href="#" onclick="setPhone();return false;">My Number</a></p>
+<div class="wallet" style="margin-top:12px"><div><span style="color:#888;font-size:11px">WALLET</span><br><b id="walletVal">$12,450</b></div><div><span style="color:#888;font-size:11px">GOLD IN STORE</span><br><b id="goldVal">15.2 g</b></div></div>
+<div class="news green" id="newsBar"><h4>● BREAKING NEWS</h4><div class="ticker" id="newsText">Gold demand surges as central banks increase reserves • AURUM LTD - Buy Gold from 0.25 oz •</div></div>
+</div>
+<div class="modal" id="modal"><div class="mBox">
+<h3 id="mTitle">Deposit via M-Pesa</h3>
+<label>Your M-Pesa Phone</label><input id="mPhone" placeholder="e.g. 0712345678">
+<label>Amount (KES)</label><input id="mAmt" type="number" placeholder="e.g. 5000">
+<div class="payInfo" id="payInfo"></div>
+<button class="sendBtn" id="sendBtn" onclick="sendRequest()">Send Request to Admin</button>
+<button class="closeBtn" onclick="closeModal()">Cancel</button>
+</div></div>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script>
+const firebaseConfig = { apiKey: "AIzaSyBtEhApuPVrVkMKHkqJigjtkiN50MD8_Qw", authDomain: "aurum-itd.firebaseapp.com", databaseURL: "https://aurum-itd-default-rtdb.firebaseio.com", projectId: "aurum-itd", storageBucket: "aurum-itd.firebasestorage.app", messagingSenderId: "330621486095", appId: "1:330621486095:web:adbd5205b54083613c0f7a", measurementId: "G-YFS59DMTMH" };
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+let curP24=2642.50, curP22=2421.80, curP18=1981.90, curSpread=1.5, curFee=2, curKes=130, mode='buy', grams=15.55, wallet=12450, goldG=15.2;
+let currencies=['USD','KES','EUR','GBP'], curIndex=0;
+let rates={USD:1, KES:130, EUR:0.92, GBP:0.79};
+let symbols={USD:'$', KES:'KSh ', EUR:'€', GBP:'£'};
+function cur(){ return currencies[curIndex]; }
+function fmt(usd){ let c=cur(); let v=usd*rates[c]; return symbols[c]+v.toLocaleString(undefined,{maximumFractionDigits:2}); }
+function pricePerGram(){ let p = mode==='buy' ? curP24*(1+curSpread/200) : curP24*(1-curSpread/200); return p/31.1035; }
+function updateTrade(){
+  let buy = curP24*(1+curSpread/200), sell = curP24*(1-curSpread/200);
+  document.getElementById('p24').innerText=fmt(curP24);
+  document.getElementById('p22').innerText=fmt(curP22);
+  document.getElementById('p18').innerText=fmt(curP18);
+  document.getElementById('pMain').innerText=fmt(curP24);
+  document.getElementById('unitLabel').innerText=cur()+' / OZ';
+  document.getElementById('buyPrice').innerText='BUY: '+fmt(buy);
+  document.getElementById('sellPrice').innerText='SELL: '+fmt(sell);
+  document.getElementById('tradeInfo').innerText='Fee: '+fmt(curFee)+' • Spread: '+curSpread+'% • 1 USD = '+curKes+' KES';
+  let total = pricePerGram()*grams + curFee;
+  document.getElementById('amountLabel').innerText = grams.toFixed(2)+' g = '+fmt(pricePerGram()*grams);
+  document.getElementById('currBtn').innerHTML = cur()+' ▼<br><small style="font-size:9px;color:#888">Tap to change</small>';
+  document.getElementById('walletVal').innerText=fmt(wallet);
+  if(mode==='buy'){
+    document.getElementById('payReceive').innerHTML = 'You Pay: <b>'+fmt(total)+'</b> • You Receive: <b>'+grams.toFixed(2)+' g Gold</b>';
+    document.getElementById('confirmBtn').innerText = 'Confirm BUY - '+fmt(total);
+  } else {
+    document.getElementById('payReceive').innerHTML = 'You Give: <b>'+grams.toFixed(2)+' g Gold</b> • You Receive: <b>'+fmt(total)+'</b>';
+    document.getElementById('confirmBtn').innerText = 'Confirm SELL - '+fmt(total);
+  }
+}
+function setMode(m){ mode=m; document.getElementById('buyBtn').classList.toggle('selected',m==='buy'); document.getElementById('sellBtn').classList.toggle('selected',m==='sell'); updateTrade(); }
+function setGram(v,btn){ grams=v; document.getElementById('gramInput').value=v; document.querySelectorAll('#gramRow button').forEach(b=>b.classList.remove('active')); if(btn) btn.classList.add('active'); updateTrade(); }
+function setGramCustom(v){ grams=parseFloat(v)||0; document.querySelectorAll('#gramRow button').forEach(b=>b.classList.remove('active')); updateTrade(); }
+function switchCurrency(){ curIndex=(curIndex+1)%currencies.length; updateTrade(); }
+function confirmTrade(){
+  let total = pricePerGram()*grams + curFee;
+  if(mode==='buy'){ wallet-=total; goldG+=grams; } else { wallet+=total; goldG-=grams; }
+  document.getElementById('goldVal').innerText=goldG.toFixed(1)+' g';
+  alert('Success!\n'+mode.toUpperCase()+' - '+grams.toFixed(2)+' g Gold\nTotal: '+fmt(total)+' ('+cur()+')');
+  updateTrade();
+}
+document.querySelectorAll('#times button').forEach(b=>{ b.onclick=()=>{ document.querySelectorAll('#times button').forEach(x=>x.classList.remove('active')); b.classList.add('active'); draw(); } });
+db.ref('aurum/prices').on('value', s=>{ const v=s.val(); if(!v) return; curP24=parseFloat(v.p24); curP22=parseFloat(v.p22); curP18=parseFloat(v.p18); updateTrade(); });
+db.ref('aurum/news').on('value', s=>{ if(s.val()) document.getElementById('newsText').innerText=s.val()+' • AURUM LTD • '; });
+db.ref('aurum/spread').on('value', s=>{ if(s.val()){ curSpread=parseFloat(s.val()); updateTrade(); } });
+db.ref('aurum/fee').on('value', s=>{ if(s.val()){ curFee=parseFloat(s.val()); updateTrade(); } });
+db.ref('aurum/kes').on('value', s=>{ if(s.val()){ curKes=parseFloat(s.val()); rates.KES=parseFloat(s.val()); updateTrade(); } });
+let isGreen=true; setInterval(()=>{ const bar=document.getElementById('newsBar'); isGreen=!isGreen; bar.className=isGreen?'news green':'news blue'; },3000);
+updateTrade();
+const c=document.getElementById('chart'),ctx=c.getContext('2d');
+function draw(){ c.width=c.offsetWidth; c.height=220; ctx.clearRect(0,0,c.width,c.height); let price=2642,x=10; const step=(c.width-20)/28; for(let i=0;i<28;i++){ let open=price,close=price+(Math.random()*14-7); let high=Math.max(open,close)+Math.random()*6,low=Math.min(open,close)-Math.random()*6; let y=(v)=>200-((v-2600)/80)*180; ctx.strokeStyle=close>=open?'#1db954':'#e53935'; ctx.fillStyle=close>=open?'#1db954':'#e53935'; ctx.beginPath(); ctx.moveTo(x+step/2,y(high)); ctx.lineTo(x+step/2,y(low)); ctx.stroke(); ctx.fillRect(x+2,y(Math.max(open,close)),step-4,Math.max(3,Math.abs(y(open)-y(close)))); price=close; x+=step; } }
+draw(); setInterval(draw,2500);
+let mpesaNumber="", mType='deposit';
+db.ref('aurum/mpesa').on('value', s=>{ if(s.val()) mpesaNumber=s.val(); });
+function getPhone(){ return localStorage.getItem('aurumPhone')||''; }
+function setPhone(){ let p=prompt('Enter your M-Pesa number (071...):', getPhone()); if(p){ localStorage.setItem('aurumPhone', p); loadWallet(); } }
+function loadWallet(){
+  let ph=getPhone();
+  document.getElementById('myPhoneTxt').innerHTML = ph ? 'Wallet linked to: '+ph+' • <a href="#" onclick="setPhone();return false;">Change</a>' : 'Wallet: Tap My Number to link your M-Pesa • <a href="#" onclick="setPhone();return false;">My Number</a>';
+  if(!ph) return;
+  db.ref('aurum/wallets/'+ph.replace(/\D/g,'')).on('value', s=>{
+    let v=s.val();
+    if(v!==null && v!==undefined){ wallet = Number(v)/curKes; updateTrade(); }
+  });
+}
+function openModal(t){ mType=t; document.getElementById('mTitle').innerText = t==='deposit' ? 'Deposit via M-Pesa' : 'Withdraw via M-Pesa'; document.getElementById('mPhone').value=getPhone(); document.getElementById('payInfo').style.display='none'; document.getElementById('modal').classList.add('open'); }
+function closeModal(){ document.getElementById('modal').classList.remove('open'); }
+function sendRequest(){
+  let ph=document.getElementById('mPhone').value.trim(); let amt=parseFloat(document.getElementById('mAmt').value);
+  if(!ph||!amt||amt<=0){ alert('Enter phone and amount'); return; }
+  localStorage.setItem('aurumPhone', ph);
+  if(mType==='deposit'){
+    document.getElementById('payInfo').style.display='block';
+    document.getElementById('payInfo').innerHTML='<b>Step 1:</b> Go to M-Pesa > Send Money<br><b>Send KES '+amt.toLocaleString()+' to:</b> <b>'+(mpesaNumber||'Admin Number - ask Admin')+'</b><br><b>Step 2:</b> Click "I Have Sent" below. Admin will approve.';
+    document.getElementById('sendBtn').innerText='I Have Sent - Send Request';
+    document.getElementById('sendBtn').onclick=()=>{ confirmSend(ph,amt); };
+    return;
+  } else { confirmSend(ph,amt); }
+}
+function confirmSend(ph,amt){
+  db.ref('aurum/requests').push({phone:ph, amount:amt, type:mType, status:'pending', time:new Date().toLocaleString()});
+  alert(mType==='deposit' ? 'Deposit request sent! Admin will approve after confirming M-Pesa.' : 'Withdraw request sent! Admin will send money to '+ph);
+  closeModal(); document.getElementById('sendBtn').innerText='Send Request to Admin'; document.getElementById('sendBtn').onclick=sendRequest; loadWallet();
+}
+function showAuthTab(t){
+  document.getElementById('tabLogin').classList.toggle('active', t==='login');
+  document.getElementById('tabSignup').classList.toggle('active', t==='signup');
+  document.getElementById('loginForm').style.display = t==='login'?'block':'none';
+  document.getElementById('signupForm').style.display = t==='signup'?'block':'none';
+}
+function cleanPhone(p){ return p.replace(/\D/g,'').replace(/^254/,'0'); }
+function showErr(id,msg){ let e=document.getElementById(id); e.style.display='block'; e.innerText=msg; }
+function doSignup(){
+  let name=document.getElementById('suName').value.trim();
+  let phone=cleanPhone(document.getElementById('suPhone').value);
+  let pin=document.getElementById('suPin').value;
+  let pin2=document.getElementById('suPin2').value;
+  if(!name || phone.length!==10) return showErr('suErr','Enter name and correct number (10 digits)');
+  if(pin.length!==4 || pin!==pin2) return showErr('suErr','PIN must be 4 digits and must match');
+  db.ref('aurum/users/'+phone).once('value').then(s=>{
+    if(s.exists()) return showErr('suErr','This number already has an account. Please Login instead.');
+    db.ref('aurum/users/'+phone).set({name:name, phone:phone, pin:pin, created:new Date().toLocaleString()}).then(()=>{
+      localStorage.setItem('aurumPhone', phone);
+      localStorage.setItem('aurumLogged','yes');
+      enterApp(name);
+    });
+  });
+}
+function doLogin(){
+  let phone=cleanPhone(document.getElementById('loginPhone').value);
+  let pin=document.getElementById('loginPin').value;
+  if(phone.length!==10 || pin.length!==4) return showErr('loginErr','Enter correct number and PIN');
+  db.ref('aurum/users/'+phone).once('value').then(s=>{
+    if(!s.exists()) return showErr('loginErr','No account with this number. Please Sign Up first.');
+    let u=s.val();
+    if(u.pin!==pin) return showErr('loginErr','Incorrect PIN. Try again.');
+    localStorage.setItem('aurumPhone', phone);
+    localStorage.setItem('aurumLogged','yes');
+    enterApp(u.name);
+  });
+}
+function enterApp(name){
+  document.getElementById('userName').innerText=name||'User';
+  document.getElementById('authBox').style.display='none';
+  document.getElementById('mainApp').style.display='block';
+  loadWallet();
+}
+function doLogout(){ localStorage.removeItem('aurumLogged'); location.reload(); }
+if(localStorage.getItem('aurumLogged')==='yes' && getPhone()){
+  db.ref('aurum/users/'+getPhone()).once('value').then(s=>{
+    if(s.exists()) enterApp(s.val().name);
+  });
+}
+let deferredPrompt=null;
+window.addEventListener('beforeinstallprompt',function(e){ e.preventDefault(); deferredPrompt=e; });
+function installApp(){
+  if(deferredPrompt){ deferredPrompt.prompt(); deferredPrompt.userChoice.then(function(){ deferredPrompt=null; }); }
+  else { alert('On Android: Tap the 3 dots top right > Add to Home Screen\nOn iPhone: Tap Share below > Add to Home Screen'); }
+}
+</script>
+</body>
+</html>

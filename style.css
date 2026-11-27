@@ -1,0 +1,48 @@
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+body { background: #f2f2f2; padding: 15px; }
+.app { max-width: 480px; margin: auto; background: white; border-radius: 20px; padding: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+.topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+.logo { font-size: 22px; font-weight: 900; letter-spacing: 1px; }
+.logo span { color: #d4af37; }
+.top-right { text-align: right; font-size: 12px; }
+.live { font-weight: bold; }
+.dot { display: inline-block; width: 8px; height: 8px; background: #22c55e; border-radius: 50%; margin-right: 4px; }
+.online { color: #22c55e; font-size: 11px; font-weight: bold; }
+.cards { display: flex; gap: 10px; margin-bottom: 15px; }
+.card { flex: 1; background: #fff; border: 1px solid #eee; border-radius: 15px; padding: 12px; text-align: center; }
+.card.gold { background: #fff8dc; border-color: #f5d76e; }
+.card p { font-size: 11px; color: #888; font-weight: bold; }
+.card h2 { font-size: 19px; margin: 6px 0; }
+.card small { color: #22c55e; font-weight: bold; font-size: 11px; }
+.box { background: white; border: 1px solid #eee; border-radius: 15px; padding: 14px; margin-bottom: 15px; }
+.box-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.box-head h3 { font-size: 14px; }
+.live-badge { background: #dcfce7; color: #16a34a; font-size: 11px; font-weight: bold; padding: 4px 10px; border-radius: 20px; }
+#goldChart { width: 100%; background: #fafafa; border-radius: 10px; }
+.times { display: flex; gap: 8px; margin-top: 10px; }
+.time { flex: 1; padding: 8px; border: none; border-radius: 20px; background: #eee; font-weight: bold; cursor: pointer; }
+.time.active { background: #111; color: white; }
+.sub { font-size: 12px; color: #888; text-align: center; margin-top: 8px; }
+.trade-row { display: flex; gap: 10px; align-items: center; margin-bottom: 15px; }
+.buy-btn { flex: 1; padding: 16px; background: #22c55e; color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: 900; cursor: pointer; }
+.sell-btn { flex: 1; padding: 16px; background: #ef4444; color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: 900; cursor: pointer; }
+.currency { width: 70px; height: 56px; background: #111; color: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 4px; font-weight: 900; cursor: pointer; }
+.arrows { font-size: 10px; line-height: 8px; }
+.amount-box { background: #fff8dc; border: 1px solid #f5d76e; border-radius: 12px; padding: 12px; }
+.amount-top { display: flex; justify-content: space-between; font-size: 13px; font-weight: bold; margin-bottom: 10px; }
+.oz-row { display: flex; gap: 8px; margin-bottom: 10px; }
+.oz { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 20px; background: white; font-weight: bold; cursor: pointer; }
+.oz.active { background: #111; color: white; }
+.amount-note, .you-pay { font-size: 13px; margin: 4px 0; }
+.confirm { width: 100%; padding: 14px; background: #111; color: white; border: none; border-radius: 10px; font-weight: 900; font-size: 16px; margin-top: 10px; cursor: pointer; }
+.calc-note { font-size: 11px; color: #888; text-align: center; margin-top: 8px; }
+.green { color: #22c55e !important; }
+.news { background: #dcfce7; border-radius: 12px; padding: 12px; margin-bottom: 12px; }
+.news span { background: #16a34a; color: white; font-size: 11px; font-weight: 900; padding: 4px 8px; border-radius: 5px; }
+.news p { font-size: 13px; margin-top: 8px; font-weight: bold; }
+.buttons-row { display: flex; gap: 10px; }
+.wa-btn { flex: 2; padding: 13px; background: #25D366; color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; }
+.mpesa-btn { flex: 1; padding: 13px; background: #111; color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; }
+.mpesa-box { background: #e8f5e9; border: 1px solid #4CAF50; border-radius: 12px; padding: 15px; margin-top: 12px; text-align: center; }
+.mpesa-box button { display: block; width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ddd; border-radius: 8px; background: white; font-weight: bold; cursor: pointer; }
+.mpesa-box p { font-size: 12px; color: #666; margin-top: 8px; }

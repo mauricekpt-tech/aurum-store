@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AURUM Admin</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+body{background:#f2f2f2;padding:20px}
+.app{max-width:430px;margin:0 auto;background:#fff;border-radius:14px;padding:20px;box-shadow:0 0 20px rgba(0,0,0,0.1)}
+.back{display:inline-block;margin-bottom:14px;text-decoration:none;color:#111;font-weight:700;font-size:13px;border:1px solid #ddd;padding:8px 12px;border-radius:20px;background:#fff}
+h1{font-size:28px;font-weight:900;color:#8a5a1a}
+p.sub{font-size:15px;margin:8px 0 18px 0}
+label{font-size:12px;font-weight:700;color:#555;display:block;margin:14px 0 6px 0}
+input,textarea{width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;font-size:15px;outline:none}
+input:focus,textarea:focus{border-color:#c9a227}
+.row{display:flex;gap:10px}
+.row div{flex:1}
+.save{width:100%;padding:14px;background:#c9a227;color:#111;border:none;border-radius:8px;font-weight:900;font-size:15px;cursor:pointer;margin-top:18px}
+.note{font-size:11px;color:#999;margin-top:10px;line-height:1.5}
+.err{color:red;font-size:13px;margin-top:10px;display:none}
+.custCard{border:1px solid #ddd;padding:10px;border-radius:8px;margin-bottom:8px}
+</style>
+</head>
+<body>
+
+<div class="app" id="loginBox">
+<a href="index.html" class="back">← Back to App</a>
+<h1>AURUM Admin</h1>
+<p class="sub">Enter Admin Password to continue.</p>
+<label>Password</label>
+<input type="password" id="passInput" placeholder="Enter password" onkeypress="if(event.key==='Enter') checkPass()">
+<button class="save" onclick="checkPass()">LOGIN</button>
+<p class="err" id="errMsg">Wrong password. Try again.</p>
+</div>
+
+<div class="app" id="adminBox" style="display:none">
+<a href="index.html" class="back">← Back to App</a>
+<h1>AURUM Admin</h1>
+<p class="sub">Change here, it will update for customers instantly.</p>
+
+<label>24K Price (USD / oz)</label>
+<input type="number" id="p24" value="2642.50" step="0.01">
+
+<label>22K Price</label>
+<input type="number" id="p22" value="2421.80" step="0.01">
+
+<label>18K Price</label>
+<input type="number" id="p18" value="1981.90" step="0.01">
+
+<div class="row">
+<div>
+<label>SPREAD %</label>
+<input type="number" id="spread" value="1.5" step="0.01">
+</div>
+<div>
+<label>FEE ($)</label>
+<input type="number" id="fee" value="2" step="0.01">
+</div>
+</div>
+
+<label>KES Rate (1 USD = ? KES)</label>
+<input type="number" id="kes" value="130" step="0.01">
+
+<label>M-Pesa Number (Hidden - customers won't see on main page)</label>
+<input type="text" id="mpesaNum" placeholder="e.g. 0712345678">
+
+<label>News</label>
+<textarea id="news" rows="2">Gold demand surges as central banks increase reserves.</textarea>
+
+<button class="save" onclick="saveAll()">SAVE - Update Live</button>
+<p class="note">Spread is the difference between BUY and SELL. If you change it here, customers will see a different BUY price vs SELL price.</p>
+
+<h2 style="margin-top:25px;font-size:18px">Wallet Requests - Approve / Reject</h2>
+<div id="reqList" style="margin-top:10px"></div>
+
+<!-- CUSTOMERS - NEW -->
+<h2 style="margin-top:25px;font-size:18px">Customers - (<span id="custCount">0</span>)</h2>
+<input type="text" id="searchCust" placeholder="🔍 Search name or number..." oninput="renderCustomers()" style="margin-top:10px">
+<div id="custList" style="margin-top:10px"><p style="font-size:13px;color:#888">Loading customers...</p></div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script>
+const firebaseConfig = { apiKey: "AIzaSyBtEhApuPVrVkMKHkqJigjtkiN50MD8_Qw", authDomain: "aurum-itd.firebaseapp.com", databaseURL: "https://aurum-itd-default-rtdb.firebaseio.com", projectId: "aurum-itd", storageBucket: "aurum-itd.firebasestorage.app", messagingSenderId: "330621486095", appId: "1:330621486095:web:adbd5205b54083613c0f7a", measurementId: "G-YFS59DMTMH" };
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const ADMIN_PASS = "Maurice2005.";
+function checkPass(){
+  const v = document.getElementById('passInput').value;
+  if(v === ADMIN_PASS){
+    document.getElementById('loginBox').style.display='none';
+    document.getElementById('adminBox').style.display='block';
+    sessionStorage.setItem('aurumAdmin','yes');
+    loadValues(); loadRequests(); loadCustomers();
+  } else { document.getElementById('errMsg').style.display='block'; }
+}
+if(sessionStorage.getItem('aurumAdmin')==='yes'){
+  document.getElementById('loginBox').style.display='none';
+  document.getElementById('adminBox').style.display='block';
+}
+function saveAll(){
+  db.ref('aurum/prices').set({p24: document.getElementById('p24').value, p22: document.getElementById('p22').value, p18: document.getElementById('p18').value});
+  db.ref('aurum/spread').set(document.getElementById('spread').value);
+  db.ref('aurum/fee').set(document.getElementById('fee').value);
+  db.ref('aurum/kes').set(document.getElementById('kes').value);
+  db.ref('aurum/mpesa').set(document.getElementById('mpesaNum').value);
+  db.ref('aurum/news').set(document.getElementById('news').value);
+  alert('Updated Live!');
+}
+function loadValues(){
+  db.ref('aurum/prices').once('value').then(s=>{ const v=s.val(); if(!v) return; document.getElementById('p24').value=v.p24; document.getElementById('p22').value=v.p22; document.getElementById('p18').value=v.p18; });
+  db.ref('aurum/spread').once('value').then(s=>{ if(s.val()) document.getElementById('spread').value=s.val(); });
+  db.ref('aurum/fee').once('value').then(s=>{ if(s.val()) document.getElementById('fee').value=s.val(); });
+  db.ref('aurum/kes').once('value').then(s=>{ if(s.val()) document.getElementById('kes').value=s.val(); });
+  db.ref('aurum/mpesa').once('value').then(s=>{ if(s.val()) document.getElementById('mpesaNum').value=s.val(); });
+  db.ref('aurum/news').once('value').then(s=>{ if(s.val()) document.getElementById('news').value=s.val(); });
+}
+function loadRequests(){
+  db.ref('aurum/requests').on('value', s=>{
+    let html='';
+    s.forEach(child=>{
+      let r=child.val(); let id=child.key;
+      if(r.status!=='pending') return;
+      html+=`<div style="border:1px solid #ddd;padding:10px;border-radius:8px;margin-bottom:8px"><b>${r.type.toUpperCase()}</b> - ${r.phone}<br>Amount: KES ${r.amount}<br><small>${r.time||''}</small><br><button onclick="approveReq('${id}','${r.phone.replace(/\D/g,'')}',${r.amount},'${r.type}')" style="background:green;color:#fff;border:none;padding:8px 12px;border-radius:6px;margin-top:6px;cursor:pointer">APPROVE</button> <button onclick="rejectReq('${id}')" style="background:red;color:#fff;border:none;padding:8px 12px;border-radius:6px;margin-top:6px;cursor:pointer">REJECT</button></div>`;
+    });
+    document.getElementById('reqList').innerHTML = html || '<p style="font-size:13px;color:#888">No pending requests</p>';
+  });
+}
+function approveReq(id, phoneKey, amt, type){
+  let ref=db.ref('aurum/wallets/'+phoneKey);
+  ref.once('value').then(s=>{
+    let bal=s.val()||0;
+    let kesRate=parseFloat(document.getElementById('kes').value)||130;
+    let usdAmt=amt/kesRate;
+    let newBal = type==='deposit' ? bal+usdAmt : Math.max(0, bal-usdAmt);
+    ref.set(newBal);
+    db.ref('aurum/requests/'+id).update({status:'approved'});
+    alert('Approved! Wallet updated.');
+  });
+}
+function rejectReq(id){ db.ref('aurum/requests/'+id).update({status:'rejected'}); alert('Rejected'); }
+// ===== CUSTOMERS - NEW =====
+let allCustomers = {}, allWallets = {};
+function loadCustomers(){
+  db.ref('aurum/users').on('value', s=>{
+    allCustomers = s.val() || {};
+    document.getElementById('custCount').innerText = Object.keys(allCustomers).length;
+    renderCustomers();
+  });
+  db.ref('aurum/wallets').on('value', s=>{
+    allWallets = s.val() || {};
+    renderCustomers();
+  });
+}
+function renderCustomers(){
+  let q = (document.getElementById('searchCust').value||'').toLowerCase();
+  let keys = Object.keys(allCustomers).reverse();
+  let html = '';
+  let kesRate = parseFloat(document.getElementById('kes').value)||130;
+  keys.forEach(phone=>{
+    let u = allCustomers[phone];
+    if(q && !(u.name||'').toLowerCase().includes(q) && !phone.includes(q)) return;
+    let walletUsd = Number(allWallets[phone]||0);
+    let walletKes = Math.round(walletUsd * kesRate).toLocaleString();
+    html += `<div class="custCard"><b>${u.name||''}</b><br><small>${phone} • Joined: ${u.created||''}</small><br><small>Wallet: <b>KES ${walletKes}</b> ($${walletUsd.toFixed(2)})</small></div>`;
+  });
+  document.getElementById('custList').innerHTML = html || '<p style="font-size:13px;color:#888">No customers yet.</p>';
+}
+if(sessionStorage.getItem('aurumAdmin')==='yes'){ loadValues(); loadRequests(); loadCustomers(); }
+</script>
+</body>
+</html>
